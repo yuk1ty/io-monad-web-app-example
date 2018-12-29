@@ -2,6 +2,7 @@ package endpoints
 
 import cats.effect.IO
 import endpoints.api.MixInHealthCheckEndpoint
+import endpoints.api.services.MixInServicesEndpoint
 import org.http4s.Method.GET
 import org.http4s._
 import org.http4s.dsl.impl.Root
@@ -13,9 +14,10 @@ trait EndpointProvider[F[_]] {
 }
 
 object EndpointProvider {
-  implicit val endpointProviderIO: EndpointProvider[IO] = new EndpointProvider[IO] with MixInHealthCheckEndpoint {
+  implicit val endpointProviderIO: EndpointProvider[IO] = new EndpointProvider[IO] with MixInHealthCheckEndpoint with MixInServicesEndpoint {
     override def endpoints: HttpService[IO] =  CORS(HttpService[IO] {
       case GET -> Root / "api" / "hc" => healthCheckEndpoint.endpoint
+      case GET -> Root / "api" / "services" => servicesEndpoint.endpoint
     })
   }
 }
