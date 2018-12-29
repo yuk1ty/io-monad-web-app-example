@@ -1,4 +1,4 @@
-package domain.model.material
+package domain.model.material.banner
 
 sealed abstract class BannerSize(w: Int, h: Int)
 
