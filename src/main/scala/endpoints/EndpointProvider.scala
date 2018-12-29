@@ -15,7 +15,7 @@ trait EndpointProvider[F[_]] {
 object EndpointProvider {
   implicit val endpointProviderIO: EndpointProvider[IO] = new EndpointProvider[IO] with MixInHealthCheckEndpoint {
     override def endpoints: HttpService[IO] =  CORS(HttpService[IO] {
-      case GET -> Root / "api" => healthCheckEndpoint.endpoint
+      case GET -> Root / "api" / "hc" => healthCheckEndpoint.endpoint
     })
   }
 }
