@@ -8,7 +8,6 @@ import domain.model.service.{
   UsesServiceRepository
 }
 import cats.effect.IO
-import cats.implicits._
 
 trait ServicesUsecase[F[_]]
     extends ApplicationUsecase[F]
@@ -22,7 +21,7 @@ object ServicesUsecase {
   implicit def serviceUsecase =
     new ServicesUsecase[IO] with MixInServiceRepository {
 
-      def services: IO[Seq[Service]] = serviceRepository.findAll
+      def services: IO[List[Service]] = serviceRepository.findAll
 
       def startServiceById(serviceId: ServiceId): IO[Option[Service]] = {
         for {
