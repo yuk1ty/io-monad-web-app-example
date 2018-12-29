@@ -8,6 +8,7 @@ import domain.model.service.{
   UsesServiceRepository
 }
 import cats.effect.IO
+import cats.implicits._
 
 trait ServicesUsecase[F[_]]
     extends ApplicationUsecase[F]
@@ -26,7 +27,7 @@ object ServicesUsecase {
       def startServiceById(serviceId: ServiceId): IO[Option[Service]] = {
         for {
           service <- serviceRepository.findServiceById(serviceId)
-          started <- service.map(_.start())
+          started <- IO(service.map(_.start()))
         } yield {
           started
         }
@@ -35,7 +36,7 @@ object ServicesUsecase {
       def terminateServiceById(serviceId: ServiceId): IO[Option[Service]] = {
         for {
           service <- serviceRepository.findServiceById(serviceId)
-          terminated <- service.map(_.terminate())
+          terminated <- IO(service.map(_.terminate()))
         } yield {
           terminated
         }
