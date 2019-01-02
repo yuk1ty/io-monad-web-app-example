@@ -12,7 +12,7 @@ import cats.effect.IO
 trait ServicesUsecase[F[_]]
     extends ApplicationUsecase[F]
     with UsesServiceRepository[F] {
-  def services: F[Seq[Service]]
+  def services: F[List[Service]]
   def startServiceById(serviceId: ServiceId): F[Option[Service]]
   def terminateServiceById(serviceId: ServiceId): F[Option[Service]]
 }
@@ -27,6 +27,7 @@ object ServicesUsecase {
         for {
           service <- serviceRepository.findServiceById(serviceId)
           started <- IO(service.map(_.start()))
+          _ <- started.fold(IO.unit)(serviceRepository.put)
         } yield {
           started
         }
@@ -36,6 +37,7 @@ object ServicesUsecase {
         for {
           service <- serviceRepository.findServiceById(serviceId)
           terminated <- IO(service.map(_.terminate()))
+          _ <- terminated.fold(IO.unit)(serviceRepository.put)
         } yield {
           terminated
         }

@@ -10,10 +10,16 @@ trait ServicesEndpoint[F[_]] extends Endpoint[F]
 object ServicesEndpoint {
   implicit def servicesEndpoint =
     new ServicesEndpoint[IO] with MixInServicesUsecase {
-      override def endpoint: IO[Response[IO]] = IO {
-        // TODO for debug
-        val tmp = servicesUsecase.services
-        Response(Status.Ok)
+      import io.circe.generic.auto._
+      import io.circe.syntax._
+      import org.http4s.dsl.io._
+      import org.http4s.circe._
+
+      override def endpoint: IO[Response[IO]] = for {
+        services <- servicesUsecase.services
+        res <- Ok(services.asJson)
+      } yield {
+        res
       }
     }
 }

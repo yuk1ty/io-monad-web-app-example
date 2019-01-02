@@ -12,6 +12,7 @@ trait ServiceRepository[F[_]]
   def findActiveServices(
       start: LocalDateTime = LocalDateTime.now(),
       end: LocalDateTime = LocalDateTime.now()): F[List[Service]]
+  def put(service: Service): IO[Unit]
 }
 
 object ServiceRepository {
@@ -31,6 +32,9 @@ object ServiceRepository {
         end: LocalDateTime = LocalDateTime.now()): IO[List[Service]] = {
       memory.map(_.values.filter(_.deliveryPeriod.between(start, end)).toList)
     }
+
+    override def put(service: Service): IO[Unit] =
+      memory.map(map => map ++ Map(service.serviceId -> service))
   }
 }
 
